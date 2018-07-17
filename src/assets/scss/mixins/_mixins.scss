@@ -1,0 +1,37 @@
+@mixin breakpoint($class) {
+  @if $class == xs-down {
+    @media (max-width: 575px) { @content; }
+  }
+
+  @else if $class == xs-up {
+    @media (min-width: 576px) { @content; }
+  }
+
+  @else if $class == sm-down {
+    @media (max-width: 767px) { @content; }
+  }
+
+  @else if $class == sm-up {
+    @media (min-width: 768px) { @content; }
+  }
+
+  @else if $class == md-down {
+    @media (max-width: 991px) { @content; }
+  }
+
+  @else if $class == md-up {
+    @media (min-width: 992px) { @content; }
+  }
+
+  @else if $class == lg-down {
+    @media (max-width: 1199px) { @content; }
+  }
+
+  @else if $class == lg-up {
+    @media (min-width: 1200px) { @content; }
+  }
+
+  @else {
+    @warn "Breakpoint mixin supports: xs, sm, md, lg";
+  }
+}
