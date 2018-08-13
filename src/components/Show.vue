@@ -1,12 +1,13 @@
 <template>
   <div class="show page">
-    <h1>{{ theShow.title }}</h1>
-    <a :href="theShow.artistLink" target="_blank">
-      {{ theShow.artist }}
+    <h1>"{{ theShow.title }}"</h1>
+    <a v-for="(a, index) in theShow.artists" :href="a.link" :key="index" target="_blank" class="artist">
+      <span class="name">{{ a.name }}</span>
       <svg class="external-link" x="0px" y="0px" viewBox="0 0 7.5 7.5">
         <line class="st0" x1="0.4" y1="7.1" x2="6.4" y2="1.1"/>
         <polyline class="st1" points="3.9,0.6 6.9,0.6 6.9,2.6 6.9,3.6 "/>
       </svg>
+      <span>{{ `${index + 1 === theShow.artists.length ? '' : ','}`}}</span>
     </a>
     <p>{{ theShow.date }}</p>
     <div v-if="!this.$store.state.isMobile" class="map-section">
@@ -26,16 +27,16 @@
         <polyline class="st1" points="2.7,140.5 75,140 75,342 2.7,342.1 "/>
         <line class="st1" x1="1069.5" y1="428.5" x2="1069.5" y2="666.5"/>
       </svg>
-      <a href="#" v-for="(p, index) in theShow.pieces" @click.prevent="openPiece(index)" :key="index" class="piece" :style="{ top: p.position[0], left: p.position[1] }">{{ index + 1 }}</a>
+      <!-- <a href="#" v-for="(p, index) in theShow.pieces" @click.prevent="openPiece(index)" :key="index" class="piece" :style="{ top: p.position[0], left: p.position[1] }">{{ index + 1 }}</a> -->
     </div>
     <div v-else class="mobile-images">
-      <div v-for="(img, index) in allImages" :key="index" class="image">
+      <!-- <div v-for="(img, index) in allImages" :key="index" class="image">
         <img :src="require(`@/assets/img/${img.path}`)">
         <p>{{ img.title }}</p>
         <p>{{ img.medium }}</p>
-      </div>
+      </div> -->
     </div>
-    <p>{{ theShow.text }}</p>
+    <p v-if="theShow.text">{{ theShow.text }}</p>
 
     <div class="images" :class="{ 'open': imagesOpen }">
       <div class="top-info">
@@ -131,6 +132,20 @@ export default {
 
         &:last-child {
           margin-bottom: 60px;
+        }
+      }
+    }
+
+    .artist {
+      display: inline;
+      text-decoration: none;
+      padding-right: 25px;
+
+      span {
+        display: inline-block;
+
+        &.name {
+          text-decoration: underline;
         }
       }
     }

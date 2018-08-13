@@ -25,7 +25,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .nav {
+  #app .nav {
     position        : fixed;
     width           : 100%;
     top             : 0px;

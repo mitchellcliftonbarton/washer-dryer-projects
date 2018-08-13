@@ -1,17 +1,24 @@
 <template>
   <div class="exhibitions page">
     <h1>Exhibitions</h1>
-    <!-- <router-link v-for="(show, index) in this.$store.state.shows" :key="index" :to="`/exhibitions/${show.link}`">{{ `${show.artist} - ${show.title}`}}</router-link> -->
-    <p>Upcoming</p>
-    <p>~ (September-October) ~ Steven Stallings</p>
-    <p>~ (October-November) ~ Ellie Goldrup</p>
-    <p>~ (November-December) ~ <a href="http://omarmhmmd.com/" target="_blank">Omar Mohammed</a></p>
+    <p v-if="current.length">Current</p>
+    <ShowItem v-for="(show, idx) in current" :key="idx" :show="show"></ShowItem>
+    <p v-if="upcoming.length">Upcoming</p>
+    <ShowItem v-for="(show, idx) in upcoming" :key="idx" :show="show"></ShowItem>
+    <p v-if="past.length">Past</p>
+    <ShowItem v-for="(show, idx) in past" :key="idx" :show="show"></ShowItem>
   </div>
 </template>
 
 <script>
+import ShowItem from '@/components/ShowItem'
+
 export default {
-  name: 'Exhibitions'
+  name: 'Exhibitions',
+  props: [ 'current', 'upcoming', 'past' ],
+  components: {
+    ShowItem
+  }
 }
 </script>
 

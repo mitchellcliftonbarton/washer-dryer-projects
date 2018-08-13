@@ -5,6 +5,7 @@ import Exhibitions from '@/components/Exhibitions'
 import Info from '@/components/Info'
 import Catalog from '@/components/Catalog'
 import Show from '@/components/Show'
+import Artists from '@/components/Artists'
 
 Vue.use(Router)
 
@@ -30,6 +31,16 @@ export default new Router({
       path: '/info',
       name: 'Info',
       component: Info
+    },
+    {
+      path: '/catalog',
+      name: 'Catalog',
+      component: Catalog
+    },
+    {
+      path: '/artists',
+      name: 'Artists',
+      component: Artists
     },
     {
       path: '/catalog',

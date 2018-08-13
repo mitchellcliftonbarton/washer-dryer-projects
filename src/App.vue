@@ -4,7 +4,7 @@
       <Nav v-if="!preloader" v-on:open-nav="toggleNav" :open="open"></Nav>
     </transition>
     <transition name="fade-up" mode="out-in" appear>
-      <router-view v-if="!open && !preloader" key="view"/>
+      <router-view v-if="!open && !preloader" key="view" :current="this.current" :past="this.past" :upcoming="this.upcoming"/>
       <Menu v-else-if="open" key="menu" v-on:close-nav="toggleNav"></Menu>
     </transition>
     <div class="wash" :class="{ 'open': open, 'up': up, 'pre': preloader }">
@@ -51,6 +51,15 @@ export default {
       return this.$store.state.isMobile
         ? `calc(50vw - ${this.stroke / 2}px)`
         : `calc(50vh - ${this.stroke / 2}px)`
+    },
+    upcoming () {
+      return this.$store.state.shows.filter(show => show.status === 'upcoming')
+    },
+    current () {
+      return this.$store.state.shows.filter(show => show.status === 'current')
+    },
+    past () {
+      return this.$store.state.shows.filter(show => show.status === 'past')
     }
   },
   methods: {
@@ -102,7 +111,7 @@ export default {
     if (this.$route.name === 'Home' && !this.$store.state.isMobile) this.preloader = true
   },
   mounted () {
-    if (this.$route.name === 'Show') setTimeout(() => this.turnUp(), 4500)
+    if (this.$route.name === 'Show') this.turnUp()
     if (this.$route.name !== 'Home') setTimeout(() => this.fadeOut(this.$refs.dryer), 2000)
 
     window.addEventListener('resize', () => {
@@ -161,12 +170,13 @@ export default {
         position : fixed;
         pointer-events: none;
         top: 0px;
-        mix-blend-mode: color-burn;
+        // mix-blend-mode: color-burn;
         transform: translate(0%, 0%);
         transition: transform cubic-bezier(.79,.23,.31,.82) .6s;
+        z-index: -20;
 
         @include breakpoint(xs-up) {
-          mix-blend-mode: color-dodge;
+          // mix-blend-mode: color-dodge;
         }
 
         &.open {
@@ -284,9 +294,21 @@ export default {
       }
     }
 
-    p a {
-      display: inline-block;
+    a {
+      transition: color .3s;
+
+      &:hover {
+        color: #ff5757;
+      }
+    }
+
+    p a, p span {
+      display: block;
       margin: 0px;
+
+      @include breakpoint(sm-up) {
+        display: inline-block;
+      }
     }
 
     a {
@@ -303,6 +325,62 @@ export default {
 
     .st0{fill:#FFFFFF;stroke:#2000ff;stroke-width:1.2;stroke-miterlimit:10;}
     .st1{fill:none;stroke:#2000ff;stroke-width:1.2;stroke-miterlimit:10;}
+  }
+
+  .show-list {
+    display: block;
+    margin-bottom: 3rem;
+    mix-blend-mode: none;
+
+    @include breakpoint(sm-up) {
+      display: flex;
+    }
+
+    .poster {
+      width: 100%;
+      height: 250px;
+
+      @include breakpoint(sm-up) {
+        width: 40%;
+        height: 45vh;
+      }
+
+      img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+
+        &.placeholder {
+          opacity: .7;
+        }
+      }
+    }
+
+    .text {
+      width: 100%;
+
+      @include breakpoint(sm-up) {
+        width: 60%;
+        padding-left: 5%;
+      }
+    }
+
+    .text span, a, p {
+      font-size: 1rem;
+      display: block;
+
+      @include breakpoint(sm-up) {
+        font-size: 4rem;
+      }
+    }
+  }
+
+  .upcoming, .insta {
+    margin-top: 4rem;
+
+    @include breakpoint(sm-up) {
+      margin-top: 10rem;
+    }
   }
 
   .fade-up-enter {
