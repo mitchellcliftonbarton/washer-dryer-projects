@@ -6,6 +6,8 @@ import Info from '@/components/Info'
 import Catalog from '@/components/Catalog'
 import Show from '@/components/Show'
 import Artists from '@/components/Artists'
+import News from '@/components/News'
+import NewsStory from '@/components/NewsStory'
 
 Vue.use(Router)
 
@@ -38,14 +40,19 @@ export default new Router({
       component: Catalog
     },
     {
-      path: '/artists',
-      name: 'Artists',
+      path: '/contributors',
+      name: 'Contributors',
       component: Artists
     },
     {
-      path: '/catalog',
-      name: 'Catalog',
-      component: Catalog
+      path: '/news',
+      name: 'News',
+      component: News
+    },
+    {
+      path: '/news/:story',
+      name: 'NewsStory',
+      component: NewsStory
     }
   ]
 })

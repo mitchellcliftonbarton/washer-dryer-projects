@@ -1,75 +1,94 @@
 <template>
   <div class="show page">
     <h1>"{{ theShow.title }}"</h1>
-    <a v-for="(a, index) in theShow.artists" :href="a.link" :key="index" target="_blank" class="artist">
+
+    <a
+      v-for="(a, index) in theShow.artists"
+      :href="a.link"
+      :key="index"
+      target="_blank"
+      class="artist"
+    >
       <span class="name">{{ a.name }}</span>
-      <svg class="external-link" x="0px" y="0px" viewBox="0 0 7.5 7.5">
-        <line class="st0" x1="0.4" y1="7.1" x2="6.4" y2="1.1"/>
-        <polyline class="st1" points="3.9,0.6 6.9,0.6 6.9,2.6 6.9,3.6 "/>
-      </svg>
+      <ExternalLinkSvg></ExternalLinkSvg>
       <span>{{ `${index + 1 === theShow.artists.length ? '' : ','}`}}</span>
     </a>
-    <p>{{ theShow.date }}</p>
-    <div v-if="!this.$store.state.isMobile" class="map-section">
-      <svg id="map" x="0px" y="0px" viewBox="0 0 1073.5 1008">
-        <path class="st0" d="M1069,680.5"/>
-        <path class="st1" d="M1069,414.1"/>
-        <polyline class="st1" points="1054.5,414.5 1069,414.1 1069,4 4,4 4,565 645,565 645,1004 1069,1004 1069,680.5 1054.5,680.5 "/>
-        <polyline class="st1" points="644.5,932.5 846,932 846.1,1004.5 "/>
-        <polyline class="st1" points="1069.3,932.5 897,932 896.5,1004.5 "/>
-        <polyline class="st1" points="75.7,306 248,306 248,500 53,500 53,342.1 "/>
-        <rect x="283.9" y="305.7" class="st1" width="195" height="194.8"/>
-        <circle class="st1" cx="741.5" cy="712.5" r="75.5"/>
-        <circle class="st1" cx="741.5" cy="540.5" r="75.5"/>
-        <rect x="630" y="285" class="st1" width="180" height="158"/>
-        <rect x="630" y="198" class="st1" width="180" height="72"/>
-        <path class="st2" d="M646.5,435.5l-32-264l204,12L819,327l-51,15c0,0-21,7-16,31s33,18,33,18l69-23c0,0,15-5,16-20s0-40,0-40V168 c0,0,1-27-31-29s-117-7-117-7l-128-8c0,0-31-1-26,35s35,297,35,297s0,13,20,25s106,79,106,79s19,15,35-6s-8-37-8-37L646.5,435.5z"/>
-        <polyline class="st1" points="2.7,140.5 75,140 75,342 2.7,342.1 "/>
-        <line class="st1" x1="1069.5" y1="428.5" x2="1069.5" y2="666.5"/>
-      </svg>
-      <!-- <a href="#" v-for="(p, index) in theShow.pieces" @click.prevent="openPiece(index)" :key="index" class="piece" :style="{ top: p.position[0], left: p.position[1] }">{{ index + 1 }}</a> -->
+
+    <p>{{ theShow.status === 'upcoming' ? `UPCOMING - ${theShow.date}` : theShow.date }}</p>
+
+    <div class="">
+
     </div>
+    <div v-if="!this.$store.state.isMobile" class="map-section">
+      <MapSvg></MapSvg>
+      <a
+        href="#"
+        v-for="(p, index) in theShow.pieces"
+        @click.prevent="openPiece(index)"
+        :key="index"
+        class="piece"
+        :style="{ top: p.position[0], left: p.position[1] }"
+        @mouseenter="turnPreviewOn(index)"
+        @mouseleave="previewOn = false"
+      >
+        {{ index + 1 }}
+      </a>
+    </div>
+
     <div v-else class="mobile-images">
-      <!-- <div v-for="(img, index) in allImages" :key="index" class="image">
-        <img :src="require(`@/assets/img/${img.path}`)">
+      <div v-for="(img, index) in allImages" :key="index" class="image">
+        <img v-if="img.pieceType === 'photo'" :src="require(`@/assets/img/${img.piecePath.path}`)">
+        <iframe
+          v-else
+          width="560"
+          height="315"
+          :src="img.piecePath.path"
+          frameborder="0"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+        ></iframe>
         <p>{{ img.title }}</p>
         <p>{{ img.medium }}</p>
-      </div> -->
+      </div>
     </div>
+
+    <div v-if="previewOn" class="image-previews">
+      <img :src="require(`@/assets/img/${currentPreview}`)" >
+    </div>
+
     <p v-if="theShow.text">{{ theShow.text }}</p>
 
-    <div class="images" :class="{ 'open': imagesOpen }">
-      <div class="top-info">
-        <p class="piece-num">{{ allImages[currentImage].piece + 1 }}</p>
-        <a class="closer" href="#" @click.prevent="imagesOpen = false">
-          <svg height="25px" width="20px" id="close" x="0px" y="0px" viewBox="0 0 16.4 16.4">
-            <line class="st0" x1="1.4" y1="1.4" x2="15" y2="15"/>
-            <line class="st0" x1="1.4" y1="15" x2="15" y2="1.4"/>
-          </svg>
-        </a>
-      </div>
-      <img :src="require(`@/assets/img/${allImages[currentImage].path}`)" alt="">
-      <div class="bottom-info">
-        <div class="arrows">
-          <a href="#" @click.prevent="next(false)">&larr;</a>
-          <a href="#" @click.prevent="next(true)">&rarr;</a>
-        </div>
-        <p class="title">{{ `${allImages[currentImage].title}, ${allImages[currentImage].medium}` }}</p>
-        <div class="dots">
-          <a v-for="(img, idx) in allImages" :key="idx" href="#" :class="{ 'active': currentImage === idx }" @click.prevent="currentImage = idx"></a>
-        </div>
-      </div>
-    </div>
+    <ShowImages
+      :imagesOpen="imagesOpen"
+      :allImages="allImages"
+      :currentImage="currentImage"
+      :theShow="theShow"
+      v-on:close-images="imagesOpen = false"
+      v-on:next="next(false)"
+      v-on:prev="next(true)"
+      v-on:set-current="setCurrent($event)"
+    ></ShowImages>
   </div>
 </template>
 
 <script>
+import MapSvg from '@/components/MapSvg'
+import ExternalLinkSvg from '@/components/ExternalLinkSvg'
+import ShowImages from '@/components/ShowImages'
+
 export default {
   name: 'Show',
+  components: {
+    MapSvg,
+    ExternalLinkSvg,
+    ShowImages
+  },
   data () {
     return {
       currentImage: 0,
-      imagesOpen: false
+      imagesOpen: false,
+      previewOn: false,
+      currentPreview: null
     }
   },
   computed: {
@@ -77,20 +96,24 @@ export default {
       return this.$store.state.shows.find(s => s.link === this.$route.params.show)
     },
     allImages () {
-      let y = []
-      this.theShow.pieces.forEach((x, index) => {
-        x.img.forEach((z) => {
-          let obj = {
-            path: z,
-            piece: index,
-            title: x.title,
-            medium: x.medium
-          }
-          y.push(obj)
+      if (this.theShow.pieces) {
+        let y = []
+        this.theShow.pieces.forEach((x, index) => {
+          x.img.forEach(z => {
+            const obj = {
+              piecePath: z,
+              pieceType: z.type,
+              piece: index,
+              title: x.title,
+              medium: x.medium,
+              tall: z.tall
+            }
+            y.push(obj)
+          })
         })
-      })
 
-      return y
+        return y
+      }
     }
   },
   methods: {
@@ -100,10 +123,27 @@ export default {
     },
     next (x) {
       if (x) {
-        if ((this.currentImage + 1) !== this.allImages.length) this.currentImage++
+        this.currentImage === this.allImages.length - 1 ? this.currentImage = 0 : this.currentImage++
       } else {
-        if (this.currentImage !== 0) this.currentImage--
+        this.currentImage === 0 ? this.currentImage = this.allImages.length - 1 : this.currentImage--
       }
+    },
+    setCurrent (image) {
+      this.currentImage = this.allImages.findIndex(x => x.piece === image)
+    },
+    turnPreviewOn (i) {
+      this.previewOn = true
+      const idx = this.allImages.findIndex(x => x.piece === i)
+      this.allImages[idx].pieceType === 'video'
+        ? this.currentPreview = this.allImages[idx].piecePath.poster
+        : this.currentPreview = this.allImages[idx].piecePath.path
+    }
+  },
+  watch: {
+    imagesOpen () {
+      this.imagesOpen
+        ? document.documentElement.style.overflow = 'hidden'
+        : document.documentElement.style.overflow = 'auto'
     }
   },
   mounted () {
@@ -115,54 +155,48 @@ export default {
 <style lang="scss">
   .show {
     .image {
-      width: 100%;
-      margin-bottom: 20px;
+      width         : 100%;
+      margin-bottom : 20px;
 
       img {
+        width         : 100%;
+        margin-bottom : 20px;
+      }
+
+      iframe {
         width: 100%;
-        margin-bottom: 20px;
       }
 
       p {
-        font-size: .8rem;
-        line-height: .8rem;
-        color: #565656;
-        letter-spacing: .03rem;
-        margin: 10px 0px;
+        font-size      : .8rem;
+        line-height    : .8rem;
+        color          : #565656;
+        letter-spacing : .03rem;
+        margin         : 10px 0px;
 
         &:last-child {
-          margin-bottom: 60px;
+          margin-bottom : 60px;
         }
       }
     }
 
     .artist {
-      display: inline;
-      text-decoration: none;
-      padding-right: 25px;
+      display         : inline;
+      text-decoration : none;
+      padding-right   : 25px;
 
       span {
-        display: inline-block;
+        display : inline-block;
 
         &.name {
-          text-decoration: underline;
+          text-decoration : underline;
         }
       }
     }
 
     .map-section {
-      margin: 100px 0px;
-      position: relative;
-
-      #map {
-        .st0{fill:none;stroke:#000000;stroke-width:8;stroke-miterlimit:10;}
-        .st1{fill:none;stroke:#0000FF;stroke-width:8;stroke-miterlimit:10;}
-        .st2{fill:#FFFFFF;stroke:#0000FF;stroke-width:8;stroke-miterlimit:10;}
-        .st3{fill:#E7E7E7;stroke:#E7E7E7;stroke-width:8;stroke-miterlimit:10;}
-        .st4{fill:#0000FF;}
-        .st5{font-family:'IBMPlexSans-Bold';}
-        .st6{font-size:35px;}
-      }
+      margin   : 100px 0px;
+      position : relative;
 
       .piece {
         position        : absolute;
@@ -184,13 +218,32 @@ export default {
         transition      : transform .1s;
 
         &:hover {
-          transform: scale(1.1);
+          transform : scale(1.1);
+          opacity: 1;
         }
       }
     }
 
+    .image-previews {
+      position        : fixed;
+      width           : 100%;
+      height          : 100%;
+      top             : 0px;
+      left            : 0px;
+      display         : flex;
+      justify-content : center;
+      align-items     : center;
+      pointer-events  : none;
+
+      img {
+        max-width  : 400px;
+        max-height : 400px;
+        opacity    : .9;
+      }
+    }
+
     .mobile-images {
-      margin-top: 50px;
+      margin-top : 50px;
 
       .image {
         img {
@@ -200,102 +253,206 @@ export default {
     }
 
     .images {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      top: 0px;
-      left: 0px;
-      pointer-events: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      transition: opacity .3s;
-      background: rgba(255, 255, 255, .95);
-      flex-direction: column;
+      position       : fixed;
+      width          : 100%;
+      height         : 100%;
+      top            : 0px;
+      left           : 0px;
+      pointer-events : none;
+      opacity        : 0;
+      transition     : opacity .3s;
+      background     : rgba(255, 255, 255, 1);
+      z-index        : 150;
 
-      &.open {
-        opacity: 1;
-      }
+      .image-container {
+        position        : absolute;
+        width           : 100%;
+        height          : 100%;
+        top             : 0px;
+        left            : 0px;
+        display         : flex;
+        justify-content : center;
+        align-items     : center;
+        pointer-events  : none;
 
-      img {
-        width: 50%;
+        &.video {
+          z-index: 10;
+        }
+
+        img, iframe {
+          max-width  : 60%;
+          max-height : 80%;
+          display    : none;
+          align-self: center;
+        }
+
+        iframe {
+          pointer-events : none;
+        }
+
+        &.active {
+          img, iframe {
+            display : block;
+          }
+        }
       }
 
       a {
-        pointer-events: auto;
-        font-size: 1rem;
-        margin: 0px;
+        pointer-events : auto;
+        font-size      : .8rem;
+        margin         : 0px;
+      }
+
+      .info {
+        position : absolute;
+        bottom   : 40px;
+        left     : 40px;
+
+        p {
+          font-size   : .9rem;
+          margin      : 0px;
+          line-height : 1.4rem;
+          color       : #2000ff;
+        }
       }
 
       .top-info {
-        position: absolute;
-        height: 70px;
-        width: 100%;
-        top: 0px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position        : absolute;
+        height          : 70px;
+        width           : 100%;
+        top             : 0px;
+        display         : flex;
+        align-items     : center;
+        justify-content : flex-start;
 
-        .piece-num {
-          font-size: 1rem;
-          margin: 0px 0px 0px 30px;
-          position: absolute;
-          left: 0px;
-          height: 30px;
-          width: 30px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          background: #E7E7E7;
-          border-radius: 50%;
-        }
+        .left {
+          display      : flex;
+          align-items  : center;
+          padding-left : 30px;
+          height       : 100%;
 
-        .closer {
-          font-size: 0rem;
-          height: 100%;
-        }
-      }
-
-      .bottom-info {
-        position: absolute;
-        height: 70px;
-        width: 100%;
-        bottom: 0px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        .arrows {
-          position: absolute;
-          margin: 0px 0px 0px 30px;
-          left: 0px;
+          p, span {
+            color : #cecece;
+          }
 
           a {
-            display: inline-block;
-            text-decoration: none;
+            color : #2000ff;
+          }
+
+          .closer {
+            font-size       : .8rem;
+            text-decoration : none;
+          }
+
+          .arrows {
+            margin : 0px 0px 0px 30px;
+            left   : 0px;
+
+            a {
+              display         : inline-block;
+              text-decoration : none;
+            }
+          }
+
+          .piece-num {
+            font-size   : .8rem;
+            margin-left : 30px;
+            width       : 80px;
+          }
+
+          .piece-info {
+            text-decoration : none;
+            margin-left     : 30px;
+          }
+
+          .closer,
+          .arrows,
+          .piece-num,
+          .piece-info {
+            transform  : translateY(-10px);
+            opacity    : 0;
+            transition : opacity .3s, transform .3s;
           }
         }
 
-        .title {
-          font-size: 1rem;
+        .right {
+          position   : absolute;
+          top        : 30px;
+          right      : 30px;
+          transform  : translateY(-10px);
+          opacity    : 0;
+          transition : opacity .3s, transform .3s;
+
+          .dots {
+            position    : absolute;
+            margin      : 0px 30px 0px 0px;
+            top         : 0px;
+            left        : 0px;
+            display     : flex;
+            align-items : center;
+            width       : 100%;
+            height      : 100%;
+
+            a {
+              display       : inline-block;
+              width         : 8px;
+              height        : 8px;
+              border-radius : 4px;
+              background    : #E7E7E7;
+              position      : absolute;
+              transition    : background .3s;
+
+              &.active {
+                background : #2000ff;
+              }
+
+              &:hover {
+                background : #2000ff;
+              }
+            }
+          }
+        }
+      }
+
+      &.open {
+        opacity        : 1;
+        pointer-events : auto;
+
+        iframe {
+          pointer-events: auto;
         }
 
-        .dots {
-          position: absolute;
-          margin: 0px 30px 0px 0px;
-          right: 0px;
-
-          a {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background: #E7E7E7;
-            margin: 0px 5px;
-
-            &.active {
-              background: #2000ff;
+        .top-info {
+          .left {
+            .closer,
+            .arrows,
+            .piece-num,
+            .piece-info {
+              transform : translateY(0px);
+              opacity   : 1;
             }
+
+            .closer {
+              transition-delay : .5s;
+            }
+
+            .arrows {
+              transition-delay : .55s;
+            }
+
+            .piece-num {
+              transition-delay : .6s;
+            }
+
+            .piece-info {
+              transition-delay : .65s;
+            }
+          }
+
+          .right {
+            transform        : translateY(0px);
+            opacity          : 1;
+            transition-delay : .7s;
           }
         }
       }

@@ -1,5 +1,6 @@
 <template>
   <div class="nav">
+    <router-link class="home-link" to="/"></router-link>
     <a href="#" class="right" @click.prevent="$emit('open-nav')">
       <transition name="switch" mode="out-in">
         <svg v-if="!open" key="dash" height="25px" width="23px" id="nav-icon" x="0px" y="0px" viewBox="0 0 21.7 9.7">
@@ -25,45 +26,57 @@ export default {
 </script>
 
 <style lang="scss">
+  @import "@/assets/scss/main.scss";
+
   #app .nav {
     position        : fixed;
     width           : 100%;
     top             : 0px;
     height          : 70px;
     display         : flex;
-    justify-content : flex-end;
+    justify-content : space-between;
     align-items     : center;
     z-index         : 100;
-    pointer-events: none;
+    pointer-events  : none;
 
     a {
-      pointer-events: auto;
+      pointer-events : auto;
+
+      &.home-link {
+        width: 25px;
+        height: 25px;
+        background: #2000ff;
+        border-radius: 50%;
+        margin: 0px 0px 0px 4rem;
+      }
 
       &.right {
-        margin: 0px 30px 0px 0px;
-        line-height: 0rem;
+        margin      : 0px 4rem 0px 0px;
+        line-height : 0rem;
 
         svg {
           line {
-            stroke-dasharray: 120%;
-            stroke-dashoffset: 0%;
-            transition: stroke-dashoffset .3s;
+            stroke-dasharray  : 120%;
+            stroke-dashoffset : 0%;
+            transition        : stroke-dashoffset .3s;
 
             &:last-child {
-              transition-delay: .1s;
+              transition-delay : .1s;
             }
           }
         }
 
-        &:hover {
-          svg {
-            line {
-              &:first-child {
-                stroke-dashoffset: -240%;
-              }
+        @include breakpoint(xs-up) {
+          &:hover {
+            svg {
+              line {
+                &:first-child {
+                  stroke-dashoffset : -240%;
+                }
 
-              &:last-child {
-                stroke-dashoffset: -240%;
+                &:last-child {
+                  stroke-dashoffset : -240%;
+                }
               }
             }
           }
@@ -95,17 +108,17 @@ export default {
 
     .switch-enter,
     .switch-leave-to {
-      opacity: 0;
+      opacity : 0;
     }
 
     .switch-enter-to,
     .switch-leave {
-      opacity: 1;
+      opacity : 1;
     }
 
     .switch-enter-active,
     .switch-leave-active {
-      transition: opacity .2s;
+      transition : opacity .2s;
     }
   }
 </style>

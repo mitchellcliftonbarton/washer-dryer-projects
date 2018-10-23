@@ -7,7 +7,7 @@
       <router-view v-if="!open && !preloader" key="view" :current="this.current" :past="this.past" :upcoming="this.upcoming"/>
       <Menu v-else-if="open" key="menu" v-on:close-nav="toggleNav"></Menu>
     </transition>
-    <div class="wash" :class="{ 'open': open, 'up': up, 'pre': preloader }">
+    <div v-if="!$store.state.isMobile" class="wash" :class="{ 'open': open, 'up': up, 'pre': preloader }">
       <svg width="200%" height="100%">
         <defs>
           <linearGradient id="Gradient1">
@@ -66,12 +66,14 @@ export default {
     toggleNav () {
       if (this.open) {
         this.open = false
-        this.$refs.dryer.pause()
+        if (!this.$store.state.isMobile) this.$refs.dryer.pause()
       } else {
         this.open = true
-        this.$refs.dryerStart.play().then(() => {
-          this.$refs.dryer.play()
-        })
+        if (!this.$store.state.isMobile) {
+          this.$refs.dryerStart.play().then(() => {
+            this.$refs.dryer.play()
+          })
+        }
       }
     },
     preloaderOff () {
@@ -102,7 +104,7 @@ export default {
   },
   watch: {
     $route (to, from) {
-      to.name === 'Show' ? this.up = true : this.up = false
+      to.name === 'Show' || to.name === 'NewsStory' ? this.up = true : this.up = false
     }
   },
   created () {
@@ -111,18 +113,20 @@ export default {
     if (this.$route.name === 'Home' && !this.$store.state.isMobile) this.preloader = true
   },
   mounted () {
-    if (this.$route.name === 'Show') this.turnUp()
-    if (this.$route.name !== 'Home') setTimeout(() => this.fadeOut(this.$refs.dryer), 2000)
+    if (this.$route.name === 'Show' || this.$route.name === 'NewsStory') this.turnUp()
+    if (this.$route.name !== 'Home' && !this.$store.state.isMobile) setTimeout(() => this.fadeOut(this.$refs.dryer), 2000)
 
     window.addEventListener('resize', () => {
       clearTimeout(this.resizeTimer)
       this.resizeTimer = setTimeout(() => this.setIsMobile(), 250)
     })
 
-    this.$refs.washer.addEventListener('animationend', () => {
-      this.preloader = false
-      this.fadeOut(this.$refs.dryer)
-    }, false)
+    if (!this.$store.state.isMobile) {
+      this.$refs.washer.addEventListener('animationend', () => {
+        this.preloader = false
+        this.fadeOut(this.$refs.dryer)
+      }, false)
+    }
   }
 }
 </script>
@@ -137,97 +141,92 @@ export default {
     height  : 100%;
 
     #app {
-      height : 100%;
-      transition: background-color .3s;
+      height     : 100%;
+      transition : background-color .3s;
 
       @keyframes spinCycle {
         from {
-          transform: rotate(0deg);
+          transform : rotate(0deg);
         }
 
         to {
-          transform: rotate(360deg);
+          transform : rotate(360deg);
         }
       }
 
       @keyframes preloader {
         from {
-          stroke-dashoffset: 113%;
-          transform: rotate(0deg);
-          opacity: 0;
+          stroke-dashoffset : 113%;
+          transform         : rotate(0deg);
+          opacity           : 0;
         }
 
         to {
-          stroke-dashoffset: 10%;
-          transform: rotate(360deg);
-          opacity: 1;
+          stroke-dashoffset : 10%;
+          transform         : rotate(360deg);
+          opacity           : 1;
         }
       }
 
       .wash {
-        height   : 100%;
-        width    : 100%;
-        position : fixed;
-        pointer-events: none;
-        top: 0px;
-        // mix-blend-mode: color-burn;
-        transform: translate(0%, 0%);
-        transition: transform cubic-bezier(.79,.23,.31,.82) .6s;
-        z-index: -20;
-
-        @include breakpoint(xs-up) {
-          // mix-blend-mode: color-dodge;
-        }
+        height         : 100%;
+        width          : 100%;
+        position       : fixed;
+        pointer-events : none;
+        top            : 0px;
+        transform      : translate(0%, 0%);
+        transition     : transform cubic-bezier(.79,.23,.31,.82) .6s;
+        z-index        : -20;
 
         &.open {
-          transform: translate(-70%, 0%);
+          transform : translate(-70%, 0%);
 
           &.up {
-            transform: translate(-70%, 0%);
+            transform : translate(-70%, 0%);
           }
 
           .washer {
-            animation-play-state: running;
+            animation-play-state : running;
           }
 
           .dryer {
-            animation-play-state: running;
+            animation-play-state : running;
           }
         }
 
         &.up {
-          transform: translate(0%, -100%);
+          transform : translate(0%, -100%);
         }
 
         .washer {
-          stroke-dasharray: 113%;
-          stroke-dashoffset: 10%;
-          transform-origin: 25% 50%;
-          animation: spinCycle 5s ease-in-out infinite;
-          animation-play-state: paused;
+          stroke-dasharray     : 113%;
+          stroke-dashoffset    : 10%;
+          transform-origin     : 25% 50%;
+          animation            : spinCycle 5s ease-in-out infinite;
+          animation-play-state : paused;
         }
 
         .dryer {
-          stroke-dasharray: 113%;
-          stroke-dashoffset: 10%;
-          transform-origin: 80% 50%;
-          animation: spinCycle 4s ease-in-out infinite;
-          animation-play-state: paused;
+          stroke-dasharray     : 113%;
+          stroke-dashoffset    : 10%;
+          transform-origin     : 80% 50%;
+          animation            : spinCycle 4s ease-in-out infinite;
+          animation-play-state : paused;
 
           @include breakpoint(xs-up) {
-            transform-origin: 60% 50%;
+            transform-origin : 60% 50%;
           }
         }
 
         &.pre {
           .washer {
-            animation: preloader 4s ease-out 1;
-            animation-fill-mode: forwards;
+            animation           : preloader 4s ease-out 1;
+            animation-fill-mode : forwards;
           }
 
           .dryer {
-            animation: preloader 3s ease-out 1;
-            animation-fill-mode: forwards;
+            animation           : preloader 3s ease-out 1;
+            animation-fill-mode : forwards;
           }
         }
       }
@@ -238,17 +237,35 @@ export default {
 
         &.show {
           @include breakpoint(xs-up) {
-            padding  : 2rem 4rem 14rem 4rem;
+            padding : 2rem 4rem 14rem 4rem;
           }
         }
 
         @include breakpoint(xs-up) {
-          padding  : 2rem 4rem;
+          padding : 2rem 4rem;
         }
 
         &.menu {
-          position: fixed;
+          position : fixed;
         }
+
+        p, span {
+          color : #7b847f;
+        }
+
+        span.no {
+          color : red;
+        }
+
+        a span {
+          color : #2000ff;
+        }
+      }
+    }
+
+    .menu {
+      a {
+        text-transform : uppercase;
       }
     }
 
@@ -258,149 +275,182 @@ export default {
     p,
     span,
     a {
-      font-family    : 'IBM Plex Sans', sans-serif;
-      color          : #2b2b2b;
-      line-height    : 1.5rem;
-      color: #2000ff;
-      display: block;
+      font-family : 'Laundry Grotesk', 'Helvetica Neue', sans-serif;
+      color       : #2b2b2b;
+      line-height : 1.5rem;
+      color       : #2000ff;
+      display     : block;
 
       @include breakpoint(xs-up) {
-        line-height    : 6rem;
+        line-height: 5.4rem;
       }
     }
 
     h1 {
       font-size      : 1rem;
       font-weight    : 400;
-      letter-spacing: .1rem;
+      letter-spacing : 0.1rem;
+      text-transform : uppercase;
 
       @include breakpoint(xs-up) {
         font-size      : 5rem;
-        letter-spacing: .2rem;
+        letter-spacing : -0.16rem;
       }
     }
 
     p,
     a {
-      font-size: 1rem;
-      font-weight: 400;
-      letter-spacing: .03rem;
-      margin: 1rem 0rem;
+      font-size      : 1rem;
+      font-weight    : 400;
+      letter-spacing : 0.1rem;
+      margin         : 1rem 0rem;
+      text-transform : uppercase;
 
       @include breakpoint(xs-up) {
-        font-size: 4.7rem;
-        letter-spacing: .1rem;
-        margin: 2rem 0rem;
+        font-size      : 4.7rem;
+        margin         : 2rem 0rem;
+        letter-spacing : 0rem;
       }
     }
 
     a {
-      transition: color .3s;
+      transition : opacity .3s;
 
       &:hover {
-        color: #ff5757;
+        opacity : .7;
       }
     }
 
     p a, p span {
-      display: block;
-      margin: 0px;
+      display : block;
+      margin  : 0px;
 
       @include breakpoint(sm-up) {
-        display: inline-block;
+        display : inline-block;
       }
     }
 
     a {
-      text-decoration: underline;
+      text-decoration : underline;
+      word-wrap       : break-word;
     }
   }
 
   .external-link {
-    width: 10px;
+    width : 10px;
 
     @include breakpoint(xs-up) {
-      width: 40px;
+      width : 40px;
     }
 
-    .st0{fill:#FFFFFF;stroke:#2000ff;stroke-width:1.2;stroke-miterlimit:10;}
-    .st1{fill:none;stroke:#2000ff;stroke-width:1.2;stroke-miterlimit:10;}
+    .st0 {
+      fill              : #FFFFFF;
+      stroke            : #2000ff;
+      stroke-width      : 1.2;
+      stroke-miterlimit : 10;
+    }
+
+    .st1 {
+      fill              : none;
+      stroke            : #2000ff;
+      stroke-width      : 1.2;
+      stroke-miterlimit : 10;
+    }
   }
 
   .show-list {
-    display: block;
-    margin-bottom: 3rem;
-    mix-blend-mode: none;
+    display        : block;
+    margin-bottom  : 3rem;
+    mix-blend-mode : none;
 
     @include breakpoint(sm-up) {
-      display: flex;
+      display : flex;
     }
 
     .poster {
-      width: 100%;
-      height: 250px;
+      width           : 100%;
+      height          : 210px;
+      display         : flex;
+      justify-content : center;
+      align-items     : center;
 
       @include breakpoint(sm-up) {
-        width: 40%;
-        height: 45vh;
+        width      : 40%;
+        height     : 45vh;
+        min-height : 400px;
+      }
+
+      &.not-available {
+        background : #f9f9f9;
       }
 
       img {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
+        object-fit : cover;
+        width      : 100%;
+        height     : 100%;
 
         &.placeholder {
-          opacity: .7;
+          opacity : .7;
+        }
+      }
+
+      p {
+        font-size      : 3rem;
+        letter-spacing : 0rem;
+        opacity        : .3;
+
+        @include breakpoint(sm-up) {
+          font-size      : 8rem;
+          letter-spacing : 2rem;
         }
       }
     }
 
     .text {
-      width: 100%;
+      width : 100%;
 
       @include breakpoint(sm-up) {
-        width: 60%;
-        padding-left: 5%;
+        width        : 60%;
+        padding-left : 5%;
       }
     }
 
     .text span, a, p {
-      font-size: 1rem;
-      display: block;
+      font-size : 1rem;
+      display   : block;
 
       @include breakpoint(sm-up) {
-        font-size: 4rem;
+        font-size : 4rem;
       }
     }
   }
 
   .upcoming, .insta {
-    margin-top: 4rem;
+    margin-top : 4rem;
 
     @include breakpoint(sm-up) {
-      margin-top: 10rem;
+      margin-top : 10rem;
     }
   }
 
   .fade-up-enter {
-    opacity: 0;
-    transform: translateY(10px);
+    opacity   : 0;
+    transform : translateY(10px);
   }
 
   .fade-up-enter-to,
   .fade-up-leave {
-    opacity: 1;
-    transform: translateY(0px);
+    opacity   : 1;
+    transform : translateY(0px);
   }
 
   .fade-up-leave-to {
-    opacity: 0;
-    transform: translateY(-10px);
+    opacity   : 0;
+    transform : translateY(-10px);
   }
 
   .fade-up-enter-active,
   .fade-up-leave-active {
-    transition: opacity .4s, transform .4s;
+    transition : opacity .4s, transform .4s;
   }
 </style>
