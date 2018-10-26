@@ -12,7 +12,7 @@ export default {
       ],
       text: 'Steven Stallings (Provo, Utah) works with a variety of mediums including video, photography, music, painting and sculpture. He is currently pursuing a BFA in Studio Art from Brigham Young University.',
       status: 'past',
-      poster: 'steven-stallings/steven-poster.jpg',
+      poster: 'steven-stallings/wd-7-3.jpg',
       pieces: [
         {
           img: [
@@ -117,7 +117,7 @@ export default {
             {
               type: 'video',
               path: 'https://www.youtube.com/embed/FF_6uZ88fVQ',
-              poster: 'steven-vid-poster.jpg'
+              poster: 'steven-stallings/steven-vid-poster.jpg'
             },
             {
               type: 'photo',
@@ -369,6 +369,34 @@ export default {
       text: null,
       status: 'upcoming',
       poster: 'open-call/poster.jpg'
+    },
+    {
+      title: null,
+      link: null,
+      date: '2/28/2019 - 4/4/2019',
+      artists: [
+        {
+          name: 'Catharine Maloney',
+          link: 'http://catharinemaloney.com/index.htm'
+        }
+      ],
+      text: null,
+      status: 'upcoming',
+      poster: 'catharine-maloney/poster.jpg'
+    },
+    {
+      title: null,
+      link: null,
+      date: '4/5/2019 - 5/10/2019',
+      artists: [
+        {
+          name: 'Actual Source',
+          link: 'http://actualsource.work/'
+        }
+      ],
+      text: null,
+      status: 'upcoming',
+      poster: 'actual-source/poster.jpg'
     }
   ]
 }

@@ -1,6 +1,8 @@
 <template>
   <div class="nav">
-    <router-link class="home-link" to="/"></router-link>
+    <transition name="switch">
+      <router-link v-if="!open" class="home-link" to="/"></router-link>
+    </transition>
     <a href="#" class="right" @click.prevent="$emit('open-nav')">
       <transition name="switch" mode="out-in">
         <svg v-if="!open" key="dash" height="25px" width="23px" id="nav-icon" x="0px" y="0px" viewBox="0 0 21.7 9.7">
@@ -34,7 +36,6 @@ export default {
     top             : 0px;
     height          : 70px;
     display         : flex;
-    justify-content : space-between;
     align-items     : center;
     z-index         : 100;
     pointer-events  : none;
@@ -47,12 +48,24 @@ export default {
         height: 25px;
         background: #2000ff;
         border-radius: 50%;
-        margin: 0px 0px 0px 4rem;
+        position: absolute;
+        left: 2rem;
+        margin: 0px;
+
+        @include breakpoint(sm-up) {
+          left: 4rem;
+        }
       }
 
       &.right {
-        margin      : 0px 4rem 0px 0px;
         line-height : 0rem;
+        position: absolute;
+        right: 2rem;
+        margin: 0px;
+
+        @include breakpoint(sm-up) {
+          right: 4rem;
+        }
 
         svg {
           line {

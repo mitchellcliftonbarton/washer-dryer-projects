@@ -57,7 +57,11 @@ export default {
     }
 
     .external-link {
-      width: 18px;
+      width: 12px;
+
+      @include breakpoint(sm-up) {
+        width: 18px;
+      }
     }
 
     p, a {

@@ -1,16 +1,19 @@
 <template>
-  <div class="show-list">
-    <div class="poster" :class="{ 'not-available': !show.poster }">
-      <img v-if="show.poster" :src="require(`@/assets/img/${show.poster}`)">
-      <p v-else>N/A</p>
+  <div class="tile">
+    <router-link v-if="show.link" :to="`/exhibitions/${show.link}`" class="image-container">
+      <img :src="require(`@/assets/img/${show.poster}`)">
+    </router-link>
+    <div v-else class="image-container">
+      <img :src="require(`@/assets/img/${show.poster}`)">
     </div>
-    <p class="text">
-      <router-link v-if="show.link && show.title" :to="`/exhibitions/${show.link}`">"{{ show.title }}"</router-link>
-      <span v-else-if="show.title && !show.link">{{ show.title }}</span>
 
-      <a v-for="(artist, index) in show.artists" :href="artist.link" target="_blank" :key="index">{{ `${artist.name} ${index + 1 === show.artists.length ? '' : ','}` }}</a>
-      <span>{{ show.date }}</span>
-    </p>
+    <div v-if="showInfo" class="info">
+      <router-link :to="`/exhibitions/${show.link}`">{{ show.title }}</router-link>
+      <p v-for="(artist, index) in show.artists" :key="index">
+        {{ `${artist.name} ${index + 1 === show.artists.length ? '' : ','}` }}
+      </p>
+    </div>
+    <p>{{ show.date }}</p>
   </div>
 </template>
 
@@ -18,7 +21,8 @@
 export default {
   name: 'ShowItem',
   props: [
-    'show'
+    'show',
+    'showInfo'
   ]
 }
 </script>

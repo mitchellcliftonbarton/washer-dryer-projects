@@ -241,6 +241,12 @@ export default {
           }
         }
 
+        &.news-story {
+          @include breakpoint(xs-up) {
+            padding : 6rem 4rem;
+          }
+        }
+
         @include breakpoint(xs-up) {
           padding : 2rem 4rem;
         }
@@ -250,7 +256,8 @@ export default {
         }
 
         p, span {
-          color : #7b847f;
+          color   : #7b847f;
+          hyphens : auto;
         }
 
         span.no {
@@ -259,6 +266,114 @@ export default {
 
         a span {
           color : #2000ff;
+        }
+      }
+
+      .main, .exhibitions {
+        a, p, span {
+          font-size   : 1rem;
+          line-height : 1.5rem;
+          margin      : 0px 0px 5px 0px;
+
+          @include breakpoint(sm-up) {
+            font-size   : 1.7rem;
+            line-height : 2.2rem;
+            margin      : 0px 0px 20px 0px;
+          }
+
+          svg {
+            width : 12px;
+
+            @include breakpoint(sm-up) {
+              width : 18px;
+            }
+          }
+
+          &.dark {
+            color : black;
+          }
+        }
+
+        .current {
+          margin    : 2rem 0px;
+          display   : flex;
+          flex-wrap : wrap;
+
+          @include breakpoint(sm-up) {
+            margin    : 5rem 0px;
+            flex-wrap : nowrap;
+          }
+
+          .cover-image {
+            width  : 100%;
+            height : 250px;
+
+            @include breakpoint(sm-up) {
+              width  : 65%;
+              height : 600px;
+            }
+
+            img {
+              object-fit : cover;
+              height     : 100%;
+              width      : 100%;
+            }
+          }
+
+          .info {
+            width      : 100%;
+            margin-top : 20px;
+
+            @include breakpoint(sm-up) {
+              width        : 30%;
+              padding-left : 5%;
+              margin-top   : 0px;
+            }
+          }
+        }
+
+        .tiles {
+          margin-bottom : 2rem;
+
+          .tiles-container {
+            display      : flex;
+            flex-wrap    : wrap;
+            margin-left  : -1%;
+            margin-right : -1%;
+
+            .tile {
+              flex       : 0 0 100%;
+              margin-top : 20px;
+
+              @include breakpoint(sm-up) {
+                flex    : 0 0 31%;
+                padding : 1%;
+                margin  : 0px;
+              }
+
+              .image-container {
+                width         : 100%;
+                height        : 200px;
+                margin-bottom : 20px;
+
+                @include breakpoint(sm-up) {
+                  height : 300px;
+                }
+
+                img {
+                  object-fit : cover;
+                  width      : 100%;
+                  height     : 100%;
+                }
+              }
+
+              .info {
+                p, a {
+                  margin : 0px;
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -282,7 +397,7 @@ export default {
       display     : block;
 
       @include breakpoint(xs-up) {
-        line-height: 5.4rem;
+        line-height : 5.4rem;
       }
     }
 
@@ -322,12 +437,8 @@ export default {
     }
 
     p a, p span {
-      display : block;
+      display : inline-block;
       margin  : 0px;
-
-      @include breakpoint(sm-up) {
-        display : inline-block;
-      }
     }
 
     a {
@@ -422,14 +533,6 @@ export default {
       @include breakpoint(sm-up) {
         font-size : 4rem;
       }
-    }
-  }
-
-  .upcoming, .insta {
-    margin-top : 4rem;
-
-    @include breakpoint(sm-up) {
-      margin-top : 10rem;
     }
   }
 

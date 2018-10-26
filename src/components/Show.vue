@@ -1,6 +1,6 @@
 <template>
   <div class="show page">
-    <h1>"{{ theShow.title }}"</h1>
+    <h1 class="title">"{{ theShow.title }}"</h1>
 
     <a
       v-for="(a, index) in theShow.artists"
@@ -14,11 +14,8 @@
       <span>{{ `${index + 1 === theShow.artists.length ? '' : ','}`}}</span>
     </a>
 
-    <p>{{ theShow.status === 'upcoming' ? `UPCOMING - ${theShow.date}` : theShow.date }}</p>
+    <p class="date">{{ theShow.status === 'upcoming' ? `UPCOMING - ${theShow.date}` : theShow.date }}</p>
 
-    <div class="">
-
-    </div>
     <div v-if="!this.$store.state.isMobile" class="map-section">
       <MapSvg></MapSvg>
       <a
@@ -56,7 +53,7 @@
       <img :src="require(`@/assets/img/${currentPreview}`)" >
     </div>
 
-    <p v-if="theShow.text">{{ theShow.text }}</p>
+    <p v-if="theShow.text" class="description">{{ theShow.text }}</p>
 
     <ShowImages
       :imagesOpen="imagesOpen"
@@ -164,7 +161,7 @@ export default {
       }
 
       iframe {
-        width: 100%;
+        width : 100%;
       }
 
       p {
@@ -180,10 +177,20 @@ export default {
       }
     }
 
+    .title {
+      margin-bottom : 0px;
+      color         : #7b847f;
+    }
+
     .artist {
       display         : inline;
       text-decoration : none;
       padding-right   : 25px;
+      font-size       : 2rem;
+
+      svg {
+        width : 20px;
+      }
 
       span {
         display : inline-block;
@@ -192,6 +199,17 @@ export default {
           text-decoration : underline;
         }
       }
+    }
+
+    .date {
+      font-size   : 2rem;
+      line-height : 2rem;
+      margin      : 0px;
+    }
+
+    .description {
+      font-size   : 2rem;
+      line-height : 2.5rem;
     }
 
     .map-section {
@@ -219,7 +237,7 @@ export default {
 
         &:hover {
           transform : scale(1.1);
-          opacity: 1;
+          opacity   : 1;
         }
       }
     }
@@ -247,7 +265,7 @@ export default {
 
       .image {
         img {
-          width: 100%;
+          width : 100%;
         }
       }
     }
@@ -276,14 +294,14 @@ export default {
         pointer-events  : none;
 
         &.video {
-          z-index: 10;
+          z-index : 10;
         }
 
         img, iframe {
           max-width  : 60%;
           max-height : 80%;
           display    : none;
-          align-self: center;
+          align-self : center;
         }
 
         iframe {
@@ -419,7 +437,7 @@ export default {
         pointer-events : auto;
 
         iframe {
-          pointer-events: auto;
+          pointer-events : auto;
         }
 
         .top-info {

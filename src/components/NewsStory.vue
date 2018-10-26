@@ -19,6 +19,9 @@ export default {
     theStory () {
       return this.$store.state.news.find(s => s.link === this.$route.params.story)
     }
+  },
+  mounted () {
+    window.scrollTo(0, 0)
   }
 }
 </script>
@@ -28,58 +31,59 @@ export default {
 
   #app .news-story {
     p, a, span {
-      font-size: 1rem;
-      line-height: 1.5rem;
-      margin: 0px;
+      font-size   : 1rem;
+      line-height : 1.5rem;
+      margin      : 0px;
 
       @include breakpoint(sm-up) {
-        font-size: 1.5rem;
-        line-height: 2.3rem;
+        font-size   : 1.5rem;
+        line-height : 2.3rem;
       }
     }
 
     div.content {
-      margin-bottom: 100px;
+      margin-bottom : 100px;
 
       @include breakpoint(sm-up) {
-        padding-left: 15%;
+        padding-left : 15%;
       }
 
       a, p {
-        text-transform: none;
+        text-transform : none;
       }
 
       .dark {
-        color: black;
+        color : black;
       }
     }
 
     .headline {
-      font-size: 1.5rem;
-      line-height: 2rem;
-      margin-bottom: 20px;
+      font-size     : 1rem;
+      line-height   : 1.5rem;
+      margin-bottom : 20px;
+      color         : black;
 
       @include breakpoint(sm-up) {
-        font-size: 3rem;
-        line-height: 3.4rem;
+        font-size   : 3rem;
+        line-height : 3.4rem;
       }
     }
 
     img {
-      width: 100%;
-      margin-bottom: 50px;
+      width         : 100%;
+      margin-bottom : 50px;
 
       @include breakpoint(sm-up) {
-        width: 50%;
+        width : 50%;
       }
     }
 
     .date {
-      display: flex;
-      margin-bottom: 30px;
+      display       : flex;
+      margin-bottom : 30px;
 
       a {
-        padding-left: 30px;
+        padding-left : 30px;
       }
     }
   }
